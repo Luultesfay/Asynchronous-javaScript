@@ -2,7 +2,7 @@
 
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
-
+/*
 const renderCountry = function (data, className = '') {
   const html = `
   <article class="country ${className}">
@@ -25,8 +25,9 @@ const renderCountry = function (data, className = '') {
 const renderError = function (msg) {
   countriesContainer.insertAdjacentText('beforeend', msg);
   countriesContainer.style.opacity = 1;
-};
+*/
 
+/*
 const getJSON = function (url, errorMsg = 'Something went wrong') {
   return fetch(url).then(response => {
     if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
@@ -34,8 +35,8 @@ const getJSON = function (url, errorMsg = 'Something went wrong') {
     return response.json();
   });
 };
+*/
 
-/*
 ///////////////////////////////////////
 // Our First AJAX Call: XMLHttpRequest
 
@@ -70,7 +71,6 @@ const getCountryData = function (country) {
 getCountryData('portugal');
 getCountryData('usa');
 getCountryData('germany');
-*/
 
 ///////////////////////////////////////
 // Welcome to Callback Hell
