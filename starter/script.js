@@ -245,3 +245,50 @@ getCountryDataAndNeighbour('kenya');
 
 //note the above code have nested callback  inside the first country call back there is 2nd country call back   so nested callback is called  callback hell
 //So basically, callback hell is when we have a lot of nested callbacks in order to execute asynchronous tasks in sequence. but call bach hell is deficult to understand
+
+////////////  PROMISE
+//NEW WAY TO GET API
+
+const request = fetch('https://restcountries.com/v2/name/eritrea'); //the promise is stored in the  request
+console.log(request); //return  promise
+
+//what is promise
+//promises are an ES6 feature. So they became available in JavaScript in 2015.
+
+//- promise is an object that is used as a place holder for the future result of an asynchronous operation
+
+//or   a container for an asynchronousely deliverd value
+
+//or we can say  a container for future value
+
+//perfect example of the future value is  response from ajax call
+
+//Now, what's the big advantage of using promises
+// 1.first by using promises we no longer need to rely on event and callback functions to handle asynchronous results, events and callback functions can sometimes cause unpredictable results.
+
+//2but even better with promises, we can chain promises for a sequence of asynchronous operations instead of nesting like we did in the last video. And with this,we can finally escape callback hell,
+
+//since promises work with asynchronous operations,they are time sensitive. So they change over time. And so promises can be in different states
+
+//life sycle of promise
+/*So in the very beginning,we say that a promise is pending.And so this is before any value resulting from the
+
+asynchronous task is available.Now, during this time,the asynchronous task is still doing its work in the background.
+
+Then when the task finally finishes, we say that the promise is settled and there are two different types of settled promises and that's 1.fulfilled promises and 2. rejected promises.*/
+
+// states of promise 1.fulfilled promises and 2. rejected promises
+
+/*a fulfilled promise is a promise that has successfully resulted in a value just as we expect it.For example, when we use the promise to fetch data
+
+from an API,a fulfilled promise successfully gets that data,and it's now available to being used.*/
+
+/*a rejected promise means that there has been an error during the asynchronous task.And the example of fetching data from an API,an error would be for example,when the user is offline and can't connect to the API server.*/
+
+//important Note :promise is setteled once  after seatled ether to fullfilled or rejected  they are not get changed
+
+/*So we consume a promise when we already have a promise, for example,the promise that was returned from the fetch function,right at the beginning of this video, remember.But in order for a promise to exist in the first place,
+
+it must first be built.So it must be created in the case of the fetch API,it's the fetch function that builds the promise and returns it for us to consume.So in this case,we don't have to build the promise ourselves in order to consume it.
+
+Now, most of the time we will actually just consume promises,which is also the easier and more useful part*/
