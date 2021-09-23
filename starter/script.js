@@ -1,8 +1,5 @@
 'use strict';
 
-const btn = document.querySelector('.btn-country');
-const countriesContainer = document.querySelector('.countries');
-
 ///////////////////////////////////////
 //asyncrnoius and syncreiuos in js
 
@@ -14,7 +11,7 @@ const countriesContainer = document.querySelector('.countries');
 ////
 /*Asynchronous code allows the program to be executed immediately where the synchronous code will block further execution of the remaining code until it finishes the current one*/
 
-//eg  setTimeout   we will
+//eg  setTimeout
 
 console.log('is my pizza ready');
 
@@ -27,7 +24,7 @@ console.log('please wait for your pizza to be ready');
 //in this above example  first   'is my pizza ready'   will be printed
 //then  set time out will be jumped becouse it will take time to get the result and  'please wait for your pizza to be ready' will be printed
 
-//then finally  the call back finction is excuted 'your pizza is ready'  will be printed     this showes then program flow is not blocked in asyncrynous  but in  synchronous it blocked
+//then finally  the call back finction is excuted 'your pizza is ready'  will be printed     this shows then program flow is not blocked in asyncrynous  but in  synchronous it blocked
 
 ///note
 
@@ -90,3 +87,89 @@ The term Ajax is just an old name that got very popular back in the day, and so 
 So instead, most APIs these days use the JSON data format.So JSON is the most popular data format today because it's basically just a JavaScript object,
 
 but converted to a string. And so therefore,it's very easy to send across the web and also to use in JavaScript once the data arrives.*/
+
+/////////////////
+/*So now that we know about AJAX and API's,let's actually make our first API call.So in this lecture, we're gonna build a nice UI component,*/
+
+//which contains data about a certain country. And this data about the countries is actually gonna come from a third party online API.
+
+/*Now in JavaScript, there are actually multiple ways of doing AJAX calls.But we're gonna start with the most old school one.
+
+And that's called the XML HTTP request function.*/
+
+const btn = document.querySelector('.btn-country');
+const countriesContainer = document.querySelector('.countries');
+/*Use XMLHttpRequest (XHR) objects to interact with servers. You can retrieve data from a URL without having to do a full page refresh. This enables a Web page to update just pa*/
+/*
+const request = new XMLHttpRequest();
+
+request.open('GET', 'https://restcountries.com/v2/name/portugal');
+//open(method: string, url: string | URL)
+
+request.send(); //then we will send request to api becouse the data still not arrived  and this indicate the ASynchronous js
+//his AJAX call that we just send off here, is being done in the background, while the rest of the code keeps running.And so this is the asynchronous,non-blocking behavior that we talked about in the last lecture.
+
+request.addEventListener('load', function () {
+  //console.log(this.responseText);
+
+  const [data] = JSON.parse(this.responseText);
+  console.log(data);
+
+  const html = `<article class="country">
+  <img class="country__img" src="${data.flags[0]}" />
+  <div class="country__data">
+    <h3 class="country__name">${data.name}</h3>
+    <h4 class="country__region">${data.region}</h4>
+    <p class="country__row"><span>🌆</span>${data.capital}
+  </p>
+  <p class="country__row"><span>👫</span>${(+data.population / 1000000).toFixed(
+    1
+  )} people</p>
+    <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+    <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+  </div>
+</article>`;
+  countriesContainer.insertAdjacentHTML('beforeend', html);
+  countriesContainer.style.opacity = 1;
+});
+*/
+//we will use multiple countries  so we will create  a function that accepts name of country and display  so we will comment out the above code
+
+const getCountryData = function (country) {
+  const request = new XMLHttpRequest();
+  request.open('GET', `https://restcountries.com/v2/name/${country}`);
+  //open(method: string, url: string | URL)
+
+  request.send(); //then we will send request to api becouse the data still not arrived  and this indicate the ASynchronous js
+  /*his AJAX call that we just send off here, is being done in the background, while the rest of the code keeps running.And so this is the asynchronous,non-blocking behavior that we talked about in the last lecture.*/
+
+  request.addEventListener('load', function () {
+    //console.log(this.responseText);
+
+    const [data] = JSON.parse(this.responseText);
+    console.log(data);
+
+    const html = `<article class="country">
+      <img class="country__img" src="${data.flags[0]}" />
+      <div class="country__data">
+        <h3 class="country__name">${data.name}</h3>
+        <h4 class="country__region">${data.region}</h4>
+        <p class="country__row"><span>🌆</span>${data.capital}
+      </p>
+      <p class="country__row"><span>👫</span>${(
+        +data.population / 1000000
+      ).toFixed(1)} people</p>
+        <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+        <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+      </div>
+    </article>`;
+    countriesContainer.insertAdjacentHTML('beforeend', html);
+    countriesContainer.style.opacity = 1;
+  });
+};
+getCountryData('eritrea');
+getCountryData('portugal');
+getCountryData('france');
+getCountryData('usa');
+
+//getCountryData(prompt('Enter country'));
