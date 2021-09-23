@@ -133,7 +133,9 @@ request.addEventListener('load', function () {
   countriesContainer.style.opacity = 1;
 });
 */
+
 //we will use multiple countries  so we will create  a function that accepts name of country and display  so we will comment out the above code
+/*
 
 const getCountryData = function (country) {
   const request = new XMLHttpRequest();
@@ -141,7 +143,7 @@ const getCountryData = function (country) {
   //open(method: string, url: string | URL)
 
   request.send(); //then we will send request to api becouse the data still not arrived  and this indicate the ASynchronous js
-  /*his AJAX call that we just send off here, is being done in the background, while the rest of the code keeps running.And so this is the asynchronous,non-blocking behavior that we talked about in the last lecture.*/
+  //his AJAX call that we just send off here, is being done in the background, while the rest of the code keeps running.And so this is the asynchronous,non-blocking behavior that we talked about in the last lecture.
 
   request.addEventListener('load', function () {
     //console.log(this.responseText);
@@ -171,5 +173,75 @@ getCountryData('eritrea');
 getCountryData('portugal');
 getCountryData('france');
 getCountryData('usa');
-
+*/
 //getCountryData(prompt('Enter country'));
+
+////////245. [OPTIONAL] How the Web Works Requests and Responses (https ,http, TCP/IP etc)
+
+/////////// THE CALL BACK HEEL
+////// in this example we will see the secound country should be load after the first one
+//the 2nd country will be depend on the first country data  becouse we will get the 2nd counntry data from the  first country
+
+const renderCountry = function (data, className = '') {
+  const html = `<article class="country" ${className}>
+        <img class="country__img" src="${data.flags[0]}" />
+        <div class="country__data">
+          <h3 class="country__name">${data.name}</h3>
+          <h4 class="country__region">${data.region}</h4>
+          <p class="country__row"><span>🌆</span>${data.capital}
+        </p>
+        <p class="country__row"><span>👫</span>${(
+          +data.population / 1000000
+        ).toFixed(1)} people</p>
+          <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+          <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+        </div>
+      </article>`;
+  countriesContainer.insertAdjacentHTML('beforeend', html);
+  countriesContainer.style.opacity = 1;
+};
+//first country ajax call
+const getCountryDataAndNeighbour = function (country) {
+  const request = new XMLHttpRequest();
+  request.open('GET', `https://restcountries.com/v2/name/${country}`);
+  //open(method: string, url: string | URL)
+
+  request.send(); //then we will send request to api becouse the data still not arrived  and this indicate the ASynchronous js
+  /*his AJAX call that we just send off here, is being done in the background, while the rest of the code keeps running.And so this is the asynchronous,non-blocking behavior that we talked about in the last lecture.*/
+
+  request.addEventListener('load', function () {
+    //console.log(this.responseText);
+
+    //first country
+    const [data] = JSON.parse(this.responseText);
+    console.log(data);
+
+    //render 1st country data
+    renderCountry(data);
+
+    //neighbour data
+    const [neighbour] = data.borders; //distructuring
+    //console.log(data.borders);
+
+    if (!neighbour) return; //if the country dont have neighbour then return  it may be an island
+
+    //Neighbour country ajax request   this is 2nd request
+
+    const request2 = new XMLHttpRequest();
+    request2.open('GET', `https://restcountries.com/v2/alpha/${neighbour}`); // we change  name  by alpha  becouse the nabour country in the first country is name by code  [ "DJI", "ETH", "SDN" ]
+    request2.send();
+
+    request2.addEventListener('load', function () {
+      const data2 = JSON.parse(this.responseText);
+      console.log(data2);
+      //render neibghbour country
+      renderCountry(data2, 'neighbour');
+    });
+  });
+};
+
+//getCountryDataAndNeighbour('eritrea');
+getCountryDataAndNeighbour('kenya');
+
+//note the above code have nested callback  inside the first country call back there is 2nd country call back   so nested callback is called  callback hell
+//So basically, callback hell is when we have a lot of nested callbacks in order to execute asynchronous tasks in sequence. but call bach hell is deficult to understand
