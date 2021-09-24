@@ -100,6 +100,7 @@ And that's called the XML HTTP request function.*/
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
 /*Use XMLHttpRequest (XHR) objects to interact with servers. You can retrieve data from a URL without having to do a full page refresh. This enables a Web page to update just pa*/
+
 /*
 const request = new XMLHttpRequest();
 
@@ -136,7 +137,6 @@ request.addEventListener('load', function () {
 
 //we will use multiple countries  so we will create  a function that accepts name of country and display  so we will comment out the above code
 /*
-
 const getCountryData = function (country) {
   const request = new XMLHttpRequest();
   request.open('GET', `https://restcountries.com/v2/name/${country}`);
@@ -176,7 +176,7 @@ getCountryData('usa');
 */
 //getCountryData(prompt('Enter country'));
 
-////////245. [OPTIONAL] How the Web Works Requests and Responses (https ,http, TCP/IP etc)
+///////245. [OPTIONAL] How the Web Works Requests and Responses (https ,http, TCP/IP etc)
 
 /////////// THE CALL BACK HEEL
 ////// in this example we will see the secound country should be load after the first one
@@ -200,6 +200,10 @@ const renderCountry = function (data, className = '') {
   countriesContainer.insertAdjacentHTML('beforeend', html);
   countriesContainer.style.opacity = 1;
 };
+
+/*
+
+
 //first country ajax call
 const getCountryDataAndNeighbour = function (country) {
   const request = new XMLHttpRequest();
@@ -207,7 +211,7 @@ const getCountryDataAndNeighbour = function (country) {
   //open(method: string, url: string | URL)
 
   request.send(); //then we will send request to api becouse the data still not arrived  and this indicate the ASynchronous js
-  /*his AJAX call that we just send off here, is being done in the background, while the rest of the code keeps running.And so this is the asynchronous,non-blocking behavior that we talked about in the last lecture.*/
+  //this AJAX call that we just send off here, is being done in the background, while the rest of the code keeps running.And so this is the asynchronous,non-blocking behavior that we talked about in the last lecture.
 
   request.addEventListener('load', function () {
     //console.log(this.responseText);
@@ -246,11 +250,17 @@ getCountryDataAndNeighbour('kenya');
 //note the above code have nested callback  inside the first country call back there is 2nd country call back   so nested callback is called  callback hell
 //So basically, callback hell is when we have a lot of nested callbacks in order to execute asynchronous tasks in sequence. but call bach hell is deficult to understand
 
+
+
+
+
+
+
 ////////////  PROMISE
 //NEW WAY TO GET API
 
-const request = fetch('https://restcountries.com/v2/name/eritrea'); //the promise is stored in the  request
-console.log(request); //return  promise
+//const request = fetch('https://restcountries.com/v2/name/eritrea'); //the promise is stored in the  request
+//console.log(request); //return  promise
 
 //what is promise
 //promises are an ES6 feature. So they became available in JavaScript in 2015.
@@ -292,3 +302,31 @@ from an API,a fulfilled promise successfully gets that data,and it's now availab
 it must first be built.So it must be created in the case of the fetch API,it's the fetch function that builds the promise and returns it for us to consume.So in this case,we don't have to build the promise ourselves in order to consume it.
 
 Now, most of the time we will actually just consume promises,which is also the easier and more useful part*/
+
+///Consuming promises
+
+///this is the modern way to get data from the web API  using promise
+
+// const getCountryData = function (country) {
+//   fetch(`https://restcountries.com/v2/name/${country}`) // the fetch returns the promise
+//     .then(function (response) {
+//       //then   method handles the promise
+//       console.log(response);
+//       //then we will need json to read the response
+//       return response.json(); // in order to read data  we call 'json' on the response  also json is a asyncrouse itself means it is runing in the back ground for its response to work so we need to call a methode'then' to hundle  json also
+//     })
+//     .then(function (data) {
+//       //console.log(data); //this will give us the diserd data of the response
+//       renderCountry(data[0]);
+//     });
+//};
+//getCountryData('portugal');
+
+//we want to use arrow function for the above code
+
+const getCountryData = function (country) {
+  fetch(`https://restcountries.com/v2/name/${country}`) // the fetch returns the promise
+    .then(response => response.json())
+    .then(data => renderCountry(data[0]));
+};
+getCountryData('portugal');
