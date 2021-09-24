@@ -324,9 +324,36 @@ Now, most of the time we will actually just consume promises,which is also the e
 
 //we want to use arrow function for the above code
 
+// const getCountryData = function (country) {
+//   fetch(`https://restcountries.com/v2/name/${country}`) // the fetch returns the promise
+//     .then(response => response.json())
+//     .then(data => renderCountry(data[0]));
+// };
+// getCountryData('portugal');
+
+///promise chaining
+
+//we will add the nighbour country
+
+//we used here chaining promises
 const getCountryData = function (country) {
+  //country 1
   fetch(`https://restcountries.com/v2/name/${country}`) // the fetch returns the promise
     .then(response => response.json())
-    .then(data => renderCountry(data[0]));
+    .then(data => {
+      renderCountry(data[0]);
+      const neighbour = data[0].borders[0]; //this means country1.borders[0]
+      //console.log(neighbour);
+
+      if (!neighbour) return;
+      //country2
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour}`);
+    })
+    .then(response => response.json())
+    .then(data => {
+      renderCountry(data);
+    });
 };
-getCountryData('portugal');
+getCountryData('eritrea');
+
+//note promise helps as to resolve complex asynchrnous code
