@@ -192,15 +192,20 @@ const renderCountry = function (data, className = '') {
         </p>
         <p class="country__row"><span>👫</span>${(
           +data.population / 1000000
-        ).toFixed(1)} people</p>
+        ).toFixed(1)} million people</p>
           <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
           <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
         </div>
       </article>`;
   countriesContainer.insertAdjacentHTML('beforeend', html);
-  countriesContainer.style.opacity = 1;
+  //countriesContainer.style.opacity = 1;
 };
 
+const renderError = function (msg) {
+  //this will display the error for the user on the screen   and we wiil get the message as argument when the error accured
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  //countriesContainer.style.opacity = 1;  // we coomented out becouse we use "finally" method and finaly will full fill the opacity
+};
 /*
 
 
@@ -331,8 +336,9 @@ Now, most of the time we will actually just consume promises,which is also the e
 // };
 // getCountryData('portugal');
 
-///promise chaining
+///////////////promise chaining
 
+/*
 //we will add the nighbour country
 
 //we used here chaining promises
@@ -375,10 +381,80 @@ const getCountryData = function (country) {
     .then(response => response.json())
     .then(data => renderCountry(data, 'neighbour')); //hundles promise
 };
-getCountryData('kenya');
+
+btn.addEventListener('click', function () {
+  getCountryData('kenya');
+});
 
 //note we chain four  asyncrnious promises  and we go out of call back hell
 // and also  seince the nieghbour country depend on the first country
 //the sequence of the response is in order it means it waits the first data to getback
 
 //note promise helps as to resolve complex asynchrnous code
+
+
+*/
+
+///////////Handling Rejected Promises   (handling the error or catching the error)
+
+//promises rejected when we try to fetch the data but the newtwork is  gone   or some thing else    so we need to handle the error
+
+//we used here chaining promises
+const getCountryData = function (country) {
+  //country 1
+  fetch(`https://restcountries.com/v2/name/${country}`) // the fetch returns  promise
+    .then(
+      response => response.json()
+      //,err => alert(err)  we can hundle all  eriors using catch methoa at the last of the chain instead of in every promise chine
+    ) //then(fulfiled callback , rejected callback)  // we handle promise that is fullfilled or promise that is rejected
+    .then(data => {
+      renderCountry(data[0]);
+      console.log(data[0]);
+      const neighbour = data[0].borders[0]; //this means country1.borders[0]
+      console.log(neighbour);
+
+      if (!neighbour) return;
+      //country2
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour}`); //the fetch returns  promise
+    })
+    .then(response => response.json())
+    .then(data => {
+      renderCountry(data, 'neighbour'); //hundles promise
+      //console.log(data);
+      const neighbour1 = data.borders[0];
+      //console.log(neighbour1);
+      if (!neighbour1) return;
+
+      //neighbour of neighbour
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour1}`); //the fetch returns  promise
+    })
+    .then(response => response.json()) //hundles promise
+    .then(data => {
+      renderCountry(data, 'neighbour'); //we pass both the jason data and the class neighbour
+      console.log(data);
+      const neighbour2 = data.borders[0];
+      console.log(neighbour2);
+      if (!neighbour2) return;
+
+      //neighbour of neighbour of neighbour
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour2}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbour'))
+    //.catch(err => alert(err)); //this catch method  handles all error that could accoure in every promise of this chain
+
+    //alternatve way or we make it styled but its the same with the above eror  both cathing the error
+    .catch(err => {
+      console.error(`${err}  💥 💥`); // typeError:Failed to fetch  💥 💥
+      //also we can print there is error happened or to let them know to users on the screen  and lets create  function called 'renderError'
+      renderError(`something wrong : ${err.message} 💥🤔💥`); //this will render in the screen     something wrong : Failed to fetch 💥🤔💥
+    })
+    .finally((countriesContainer.style.opacity = 1));
+  //finally is called when ever happened to the promise  ether reject or fullfiled  so here opacity is handled  we dont need opacity to be hundled in the  fulfiled promise or rejected promise
+};
+
+btn.addEventListener('click', function () {
+  getCountryData('kenya');
+});
+
+////note   'then'  then called when the promise is fullfilled     'catch' is called when the promise is rejected  and  'finally' called  when ever  happened
