@@ -183,7 +183,7 @@ getCountryData('usa');
 //the 2nd country will be depend on the first country data  becouse we will get the 2nd counntry data from the  first country
 
 const renderCountry = function (data, className = '') {
-  const html = `<article class="country" ${className}>
+  const html = `<article class="country ${className}">
         <img class="country__img" src="${data.flags[0]}" />
         <div class="country__data">
           <h3 class="country__name">${data.name}</h3>
@@ -338,22 +338,47 @@ Now, most of the time we will actually just consume promises,which is also the e
 //we used here chaining promises
 const getCountryData = function (country) {
   //country 1
-  fetch(`https://restcountries.com/v2/name/${country}`) // the fetch returns the promise
+  fetch(`https://restcountries.com/v2/name/${country}`) // the fetch returns  promise
     .then(response => response.json())
     .then(data => {
       renderCountry(data[0]);
+      console.log(data[0]);
       const neighbour = data[0].borders[0]; //this means country1.borders[0]
-      //console.log(neighbour);
+      console.log(neighbour);
 
       if (!neighbour) return;
       //country2
-      return fetch(`https://restcountries.com/v2/alpha/${neighbour}`);
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour}`); //the fetch returns  promise
     })
     .then(response => response.json())
     .then(data => {
-      renderCountry(data);
-    });
+      renderCountry(data, 'neighbour'); //hundles promise
+      //console.log(data);
+      const neighbour1 = data.borders[0];
+      //console.log(neighbour1);
+      if (!neighbour1) return;
+
+      //neighbour of neighbour
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour1}`); //the fetch returns  promise
+    })
+    .then(response => response.json()) //hundles promise
+    .then(data => {
+      renderCountry(data, 'neighbour'); //we pass both the jason data and the class neighbour
+      console.log(data);
+      const neighbour2 = data.borders[0];
+      console.log(neighbour2);
+      if (!neighbour2) return;
+
+      //neighbour of neighbour of neighbour
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour2}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbour')); //hundles promise
 };
-getCountryData('eritrea');
+getCountryData('kenya');
+
+//note we chain four  asyncrnious promises  and we go out of call back hell
+// and also  seince the nieghbour country depend on the first country
+//the sequence of the response is in order it means it waits the first data to getback
 
 //note promise helps as to resolve complex asynchrnous code
