@@ -97,8 +97,8 @@ but converted to a string. And so therefore,it's very easy to send across the we
 
 And that's called the XML HTTP request function.*/
 
-const btn = document.querySelector('.btn-country');
-const countriesContainer = document.querySelector('.countries');
+// const btn = document.querySelector('.btn-country');
+// const countriesContainer = document.querySelector('.countries');
 /*Use XMLHttpRequest (XHR) objects to interact with servers. You can retrieve data from a URL without having to do a full page refresh. This enables a Web page to update just pa*/
 
 /*
@@ -182,30 +182,30 @@ getCountryData('usa');
 ////// in this example we will see the secound country should be load after the first one
 //the 2nd country will be depend on the first country data  becouse we will get the 2nd counntry data from the  first country
 
-const renderCountry = function (data, className = '') {
-  const html = `<article class="country ${className}">
-        <img class="country__img" src="${data.flags[0]}" />
-        <div class="country__data">
-          <h3 class="country__name">${data.name}</h3>
-          <h4 class="country__region">${data.region}</h4>
-          <p class="country__row"><span>🌆</span>${data.capital}
-        </p>
-        <p class="country__row"><span>👫</span>${(
-          +data.population / 1000000
-        ).toFixed(1)} million people</p>
-          <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
-          <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
-        </div>
-      </article>`;
-  countriesContainer.insertAdjacentHTML('beforeend', html);
-  //countriesContainer.style.opacity = 1;
-};
+// const renderCountry = function (data, className = '') {
+//   const html = `<article class="country ${className}">
+//         <img class="country__img" src="${data.flags[0]}" />
+//         <div class="country__data">
+//           <h3 class="country__name">${data.name}</h3>
+//           <h4 class="country__region">${data.region}</h4>
+//           <p class="country__row"><span>🌆</span>${data.capital}
+//         </p>
+//         <p class="country__row"><span>👫</span>${(
+//           +data.population / 1000000
+//         ).toFixed(1)} million people</p>
+//           <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+//           <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+//         </div>
+//       </article>`;
+//   countriesContainer.insertAdjacentHTML('beforeend', html);
+//   //countriesContainer.style.opacity = 1;
+// };
 
-const renderError = function (msg) {
-  //this will display the error for the user on the screen   and we wiil get the message as argument when the error accured
-  countriesContainer.insertAdjacentText('beforeend', msg);
-  //countriesContainer.style.opacity = 1;  // we coomented out becouse we use "finally" method and finaly will full fill the opacity
-};
+// const renderError = function (msg) {
+//   //this will display the error for the user on the screen   and we wiil get the message as argument when the error accured
+//   countriesContainer.insertAdjacentText('beforeend', msg);
+//   //countriesContainer.style.opacity = 1;  // we coomented out becouse we use "finally" method and finaly will full fill the opacity
+// };
 /*
 
 
@@ -395,6 +395,7 @@ btn.addEventListener('click', function () {
 
 */
 
+/*
 ///////////Handling Rejected Promises   (handling the error or catching the error)
 
 //promises rejected when we try to fetch the data but the newtwork is  gone   or some thing else    so we need to handle the error
@@ -454,7 +455,171 @@ const getCountryData = function (country) {
 };
 
 btn.addEventListener('click', function () {
-  getCountryData('kenya');
+  getCountryData('gmfmswdmwqndfinwfi');
 });
 
 ////note   'then'  then called when the promise is fullfilled     'catch' is called when the promise is rejected  and  'finally' called  when ever  happened
+
+*/
+
+//////////////////throwining error manually
+
+///what if  we pass country that is not exist in the world   then we will  need to hundle them munually
+
+//lets copy  the above code and comment out too
+
+//we used here chaining promises
+
+/*
+const getCountryData = function (country) {
+  //country 1
+  fetch(`https://restcountries.com/v2/name/${country}`) // the fetch returns  promise
+    .then(response => {
+      console.log(response);
+      if (!response.ok)
+        throw new Error(`Country not found (${response.status})`);
+
+      return response.json();
+    })
+    .then(data => {
+      renderCountry(data[0]);
+      console.log(data[0]);
+      const neighbour = data[0].borders[0]; //this means country1.borders[0]
+      console.log(neighbour);
+
+      if (!neighbour) return;
+      //country2
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour}`); //the fetch returns  promise
+    })
+    .then(response => {
+      console.log(response);
+      if (!response.ok)
+        throw new Error(`Country not found (${response.status})`);
+
+      return response.json();
+    })
+    .then(data => {
+      renderCountry(data, 'neighbour'); //hundles promise
+      //console.log(data);
+      const neighbour1 = data.borders[0];
+      //console.log(neighbour1);
+      if (!neighbour1) return;
+
+      //neighbour of neighbour
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour1}`); //the fetch returns  promise
+    })
+    .then(response => response.json()) //hundles promise
+    .then(data => {
+      renderCountry(data, 'neighbour'); //we pass both the jason data and the class neighbour
+      console.log(data);
+      const neighbour2 = data.borders[0];
+      console.log(neighbour2);
+      if (!neighbour2) return;
+
+      //neighbour of neighbour of neighbour
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour2}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbour'))
+    .catch(err => {
+      console.error(`${err}  💥 💥`); // typeError:Failed to fetch  💥 💥
+      //also we can print there is error happened or to let them know to users on the screen  and lets create  function called 'renderError'
+      renderError(`something wrong : ${err.message} 💥🤔💥`); //this will render in the screen     something wrong : Failed to fetch 💥🤔💥
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
+  //finally is called when ever happened to the promise  ether reject or fullfiled  so here opacity is handled  we dont need opacity to be hundled in the  fulfiled promise or rejected promise
+};
+
+btn.addEventListener('click', function () {
+  getCountryData('kenya');
+});
+
+//getCountryData('egypt');
+*/
+
+//we will  refactor the above error code, we will create  method   "getJson"
+/*
+const getJSON = function (url, errorMesge = 'something wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMesge}(${response.status})`);
+
+    return response.json();
+  });
+};
+
+const getCountryData = function (country) {
+  //country 1
+
+  getJSON(`https://restcountries.com/v2/name/${country}`, `Country not found `)
+    .then(data => {
+      renderCountry(data[0]);
+      console.log(data[0]);
+      const neighbour = data[0].borders[0]; //this means country1.borders[0]
+      if (!neighbour) throw new Error('no neighbour found!');
+
+      if (!neighbour) return;
+      //country2
+      return getJSON(
+        `https://restcountries.com/v2/alpha/${neighbour}`,
+        `Country not found`
+      ); //the fetch returns  promise
+    })
+    .then(data => {
+      renderCountry(data, 'neighbour'); //hundles promise
+      //console.log(data);
+      const neighbour1 = data.borders[0];
+      //console.log(neighbour1);
+      if (!neighbour1) return;
+
+      //neighbour of neighbour
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour1}`); //the fetch returns  promise
+    })
+    .then(response => response.json()) //hundles promise
+    .then(data => {
+      renderCountry(data, 'neighbour'); //we pass both the jason data and the class neighbour
+      console.log(data);
+      const neighbour2 = data.borders[0];
+      console.log(neighbour2);
+      if (!neighbour2) return;
+
+      //neighbour of neighbour of neighbour
+      return fetch(`https://restcountries.com/v2/alpha/${neighbour2}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbour'))
+    .catch(err => {
+      console.error(`${err}  💥 💥`); // typeError:Failed to fetch  💥 💥
+      //also we can print there is error happened or to let them know to users on the screen  and lets create  function called 'renderError'
+      renderError(`something wrong : ${err.message} 💥🤔💥`); //this will render in the screen     something wrong : Failed to fetch 💥🤔💥
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
+  //finally is called when ever happened to the promise  ether reject or fullfiled  so here opacity is handled  we dont need opacity to be hundled in the  fulfiled promise or rejected promise
+};
+
+btn.addEventListener('click', function () {
+  getCountryData('kenya');
+});
+
+//getCountryData('australia');
+
+////challange 1
+// In this challenge you will build a function 'whereAmI' which renders a country
+// only based on GPS coordinates. For that, you will use a second API to geocode
+// coordinates. So in this challenge, you’ll use an API on your own for the first time 😁
+
+// 1. Create a function 'whereAmI' which takes as inputs a latitude value ('lat')
+// and a longitude value ('lng') (these are GPS coordinates, examples are in test
+// data below).
+
+// const whereAmI = function (lat, lng) {
+//   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`).then(response => {
+//     console.log(response);
+//     return response.json();
+//   });
+// };
+// whereAmI(52.508, 13.381);
+*/
