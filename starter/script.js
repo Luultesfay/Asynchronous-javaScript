@@ -605,21 +605,96 @@ btn.addEventListener('click', function () {
 });
 
 //getCountryData('australia');
-
-////challange 1
-// In this challenge you will build a function 'whereAmI' which renders a country
-// only based on GPS coordinates. For that, you will use a second API to geocode
-// coordinates. So in this challenge, you’ll use an API on your own for the first time 😁
-
-// 1. Create a function 'whereAmI' which takes as inputs a latitude value ('lat')
-// and a longitude value ('lng') (these are GPS coordinates, examples are in test
-// data below).
-
-// const whereAmI = function (lat, lng) {
-//   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`).then(response => {
-//     console.log(response);
-//     return response.json();
-//   });
-// };
-// whereAmI(52.508, 13.381);
 */
+////challange 1  done at dd
+
+/////////Asynchronous Behind the Scenes The Event Loop
+
+/*
+a JavaScript runtime is basically a container which includes all the different pieces that are necessary to execute JavaScript code.
+
+Now, the heart of every JavaScript runtime is the engine. So, this is where code is actually executed and where objects are stored in memory.
+
+So, these two things happen in the call stack  and in the heap.
+*/
+
+/*
+Now, what's important to note here is that JavaScript has only one threat of execution.
+
+And so it can only do one thing at a time.There is absolutely no multitasking happening  in JavaScript itself.
+
+Now, other languages like Java can execute multiple pieces of code at the same time, but not JavaScript.
+*/
+
+//js have only one thread of execution  , it means it will do one thing at the time
+
+/*next we have 
+--the web APIs environment.These are some APIs provided to the engine, but which are actually not part of
+
+the JavaScript language itself. So, that's things like the DOM timers  the fetch API, the geolocation API, and so on and so forth.*/
+
+/*Next up, there is the 
+--callback queue  and this is a data structure that holds all the ready to be executed callback functions that are attached to some event that has occurred.
+
+-Finally, whenever the call stack is empty the
+-event loop takes callbacks from the callback queue and puts them into call stack so that they can be executed.
+
+So the event loop is the essential piece that makes asynchronous behavior possible in JavaScript.
+
+It's the reason why we can have a non blocking concurrency model in JavaScript. And a concurrency model is simply how a language handles multiple things happening at the same time.
+*/
+
+/*let's focus on the essential parts of the runtime here.  So, that's the call stack the event loop the web APIs and to callback queue.
+
+So, as you know, by now, a JavaScript engine is built  around the idea of a single thread
+
+-question : But if there was only one thread of execution in the engine then how can asynchronous code be executed  in a non blocking way?*/
+
+/*as you already know everything related to the DOM is not really part of JavaScript, but of the web APIs. 
+
+And so it's in a web APIs environment where the asynchronous tasks related to the DOM will run.
+
+And in fact, the same is true for timers AJAX calls and really all other asynchronous tasks. 
+
+So, again, these asynchronous tasks will all run in the web API environment of the browser.
+
+- for example if we have image is loading its doing it asyncrousley in the background which means in the web Api not in call stuck 
+becouse if it was in call stack it will block the other codes to excute  becouse loding image takes time */
+
+/*if we want to do something after the image has finished loading, then we need to listen to the load event.
+
+And so that's exactly what we do in the next line of code. So, here we attach an event listener
+
+to the load event of that image and pass an a callback function as always. In practice, this means to register this callback
+
+in the web APIs environment, exactly where the image is loading. then after the image finshed loading the callback function of the image which attached is put in callback qeue 
+
+-And the callback queue is basically an ordered list of all the callback functions that are in line to be executed.
+
+-note that if there is another call back in the queue  then  the new callback ordered behind the first call back on the queue
+
+
+Now, another thing that's important to mention here is that the callback queue also contains callbacks coming from DOM events like clicks or key presses or whatever.
+
+Now, we learned before that DOM events are not really asynchronous behavior, but they still use the callback queue to run their attached callbacks.
+*/
+
+/*event loop--So, here is what the event loop does.It looks into the call stack and determines whether it's empty or not.
+
+Except of course for the global context,then if the stack is indeed empty which means that there's currently no code being executed
+
+then it will take the first callback from the callback queue nd put it on the call stack two will be executed. And this is called an "event loop tick".
+
+event loop has the extremely important task of doing coordination between the call stack and to callbacks in the callback queue.
+
+So, the event loop is basically who decides exactly when each callback is executed.*/
+
+/**Another thing that becomes clear from this whole explanation is that the JavaScript language itself has actually no sense of time.
+
+That's because everything that is asynchronous does not happen in the engine. It's the runtime who manages all the asynchronous behavior.*/
+
+/*So, in a nutshell, the web APIs environment, the callback queue  and the event loop, all together, make it possible that asynchronous code can be executed in a non blocking way 
+even with only one thread of execution in the engine.*/
+
+//Note : call back coming from promises is not going to call back QUEUE  instead they  have special queue  called "micro tasks queue"  and  callback that came from promises have priority over the callback in the callback queue
+//the event loop first  take the callback in mixcrotask queue  to be excuted then when it finsh with it goes to callback queue
