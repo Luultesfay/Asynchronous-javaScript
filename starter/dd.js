@@ -53,10 +53,10 @@ const whereIAm = function (lat, lng) {
   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
     .then(response => response.json())
     .then(data => {
-      console.log(data);
+      //console.log(data);
       //renderCountries(data);
       const country = data.country;
-      console.log(country);
+      //console.log(country);
 
       //we can inject the country
       //console.log(typeof data);
@@ -68,7 +68,7 @@ const whereIAm = function (lat, lng) {
     .then(response => response.json())
     .then(data => {
       renderCountries(data[0]);
-      console.log(data[0]);
+      //console.log(data[0]);
 
       const neighbour = data[0].borders[0];
       console.log(neighbour);
@@ -78,7 +78,7 @@ const whereIAm = function (lat, lng) {
     .then(response => response.json())
     .then(data => {
       renderCountries(data, 'neighbour');
-      console.log(data);
+      //console.log(data);
     })
     .catch(err => {
       console.error(`${err} 💥💥💥`);
@@ -88,7 +88,7 @@ const whereIAm = function (lat, lng) {
     });
 };
 btns.addEventListener('click', function () {
-  whereIAm(52.508, 13.381);
+  //whereIAm(52.508, 13.381);
   //whereIAm(19.037, 72.873);
-  //whereIAm(-33.933, 18.474);
+  whereIAm(-33.933, 18.474);
 });
