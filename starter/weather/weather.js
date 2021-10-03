@@ -81,5 +81,6 @@ const weatherss = function (latt, long) {
 };
 
 btns.addEventListener('click', function () {
-  weatherss(52.508, 13.381);
+  //weatherss(52.508, 13.381);
+  weatherss(41.878113, -87.629799);
 });

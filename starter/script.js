@@ -698,3 +698,18 @@ even with only one thread of execution in the engine.*/
 
 //Note : call back coming from promises is not going to call back QUEUE  instead they  have special queue  called "micro tasks queue"  and  callback that came from promises have priority over the callback in the callback queue
 //the event loop first  take the callback in mixcrotask queue  to be excuted then when it finsh with it goes to callback queue
+
+//event loop practice
+
+console.log('test start'); // 1 st to print  this will first print
+
+setTimeout(() => console.log('0 sec timer'), 0); // then lastly we get othis printed since  it runs after the  promise in micro tasks queue
+
+Promise.resolve('test resolved').then(res => console.log(res));
+
+Promise.resolve('resolve 2').then(res => {
+  //since the secound promis take long to excute the timer needs to wait
+  for (let i = 0; i < 100000000; i++) {}
+  console.log(res);
+});
+console.log('test end'); // 2 to print
