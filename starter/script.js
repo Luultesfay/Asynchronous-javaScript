@@ -703,7 +703,7 @@ even with only one thread of execution in the engine.*/
 
 console.log('test start'); // 1 st to print  this will first print
 
-setTimeout(() => console.log('0 sec timer'), 0); // then lastly we get othis printed since  it runs after the  promise in micro tasks queue
+setTimeout(() => console.log('0 sec timer'), 0); // then lastly we get this printed since  it runs after the  promise in micro tasks queue
 
 Promise.resolve('test resolved').then(res => console.log(res));
 
@@ -713,3 +713,116 @@ Promise.resolve('resolve 2').then(res => {
   console.log(res);
 });
 console.log('test end'); // 2 to print
+
+//we will build A simple promise and  we will consiume it    that exmple is lottery promise
+//that return promise if we win or lose and we use the returnd promise to be consumed by 'then' method
+
+////we will put  call back function called executor   inside that promise have two argument  (resolve ,reject)
+
+//lets assign the promise to variable called  lotteryPromise
+// let lotteryPromise = new Promise(function (resolve, reject) {
+//   //promise
+//   if (Math.random() > 0.5) {
+//     resolve('you win the lottery 💰');
+//   } else {
+//     reject('you lose money🙇');
+//   }
+// });
+// lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
+
+//the above code is not being asyncrnouse   we will add timers to be  asyncrnouse
+
+let lotteryPromise = new Promise(function (resolve, reject) {
+  //promise
+  console.log('lottery draw happening');
+  setTimeout(function () {
+    if (Math.random() >= 0.5) {
+      resolve('you win the lottery 💰');
+    } else {
+      reject(new Error('you lose money🙇'));
+    }
+  }, 2000);
+});
+lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
+
+/*NOTE
+in practice, most of the time all we actually do is to consume promises. And we usually only built promises
+
+to basically wrap old callback based functions into promises. And this is a process that we call promisifying.*/
+
+//So basically promisifying means to convert callback based asynchronous behavior to promise based.
+
+///promisifying setTimeOut
+
+const wait = function (sec) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, sec * 1000);
+  });
+};
+
+// wait(2)
+//   .then(() => {
+//     console.log('i waited for 2 sec');
+//     return wait(1);
+//   })
+//   .then(() => console.log('i waited 1 sec'));
+
+// so we can promisifay this settimeOut code
+
+// setTimeout(() => {
+//   console.log('1 second passed');
+//   setTimeout(() => {
+//     console.log('2 seconds passed');
+//     setTimeout(() => {
+//       console.log('3 second passed');
+//       setTimeout(() => {
+//         console.log('4 second passed');
+//       }, 1000);
+//     }, 1000);
+//   }, 1000);
+// }, 1000);
+
+// the best way to write the  above callback Hell
+wait(1)
+  .then(() => {
+    console.log('1 second passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('2 seconds passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('3 second passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('4 second passed');
+  });
+
+//we can  also   imdettly  'resolve' promise
+
+Promise.resolve('abc').then(x => console.log(x)); //abc
+Promise.reject(new Error('problem happend  ')).catch(err => console.error(err)); //Error: problem happend
+
+//PROMISFYING THE GEOLOCATION API    from callback based to promise based
+
+//call back based
+// navigator.geolocation.getCurrentPosition(
+//   position => console.log(position),
+//   err => console.error(err)
+// );
+
+//promise based api
+// we promisfying the above commented out code
+const getPositonss = new Promise(function (resolve, reject) {
+  // navigator.geolocation.getCurrentPosition(
+  //   position => resolve(position),
+  //   err => reject(err)
+  // );
+
+  //or we  can simpley do that  its the same with the above commented out code
+
+  navigator.geolocation.getCurrentPosition(resolve, reject);
+});
+getPositonss.then(pos => console.log(pos)); //we get the current location from the browser
