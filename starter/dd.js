@@ -49,8 +49,66 @@ const renderCountries = function (data, className = '') {
   countriesContainers.insertAdjacentHTML('beforeend', html);
   //countriesContainers.style.opacity = 1;
 };
-const whereIAm = function (lat, lng) {
-  fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
+
+// const whereIAm = function (lat, lng) {
+//   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
+//     .then(response => response.json())
+//     .then(data => {
+//       //console.log(data);
+//       //renderCountries(data);
+//       const country = data.country;
+//       //console.log(country);
+
+//       //we can inject the country
+//       //console.log(typeof data);
+//       console.log(`you are in ${data.country}`);
+
+//       if (!country) return;
+//       return fetch(`https://restcountries.com/v2/name/${country}`);
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//       renderCountries(data[0]);
+//       //console.log(data[0]);
+
+//       const neighbour = data[0].borders[0];
+//       console.log(neighbour);
+//       if (!neighbour) return;
+//       return fetch(`https://restcountries.com/v2/alpha/${neighbour}`);
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//       renderCountries(data, 'neighbour');
+//       //console.log(data);
+//     })
+//     .catch(err => {
+//       console.error(`${err} 💥💥💥`);
+//     })
+//     .finally(() => {
+//       countriesContainers.style.opacity = 1;
+//     });
+// };
+// btns.addEventListener('click', function () {
+//   //whereIAm(52.508, 13.381);
+//   //whereIAm(19.037, 72.873);
+//   whereIAm(-33.933, 18.474);
+// });
+
+///promisfying the above code according our location
+
+let getPositions = new Promise(function (resolve, reject) {
+  navigator.geolocation.getCurrentPosition(resolve, reject);
+});
+//getPositons.then(pos => console.log(pos)); //we get the current location from the browser
+
+const whereIAm = function () {
+  getPositions
+    .then(pos => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+      console.log(pos);
+      return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+    })
+
     .then(response => response.json())
     .then(data => {
       //console.log(data);
@@ -87,8 +145,76 @@ const whereIAm = function (lat, lng) {
       countriesContainers.style.opacity = 1;
     });
 };
-btns.addEventListener('click', function () {
-  //whereIAm(52.508, 13.381);
-  //whereIAm(19.037, 72.873);
-  whereIAm(-33.933, 18.474);
-});
+btns.addEventListener('click', whereIAm);
+
+//we copying it from the script.js to use it for the code below
+const waits = function (sec) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, sec * 1000);
+  });
+};
+
+////////challenge 2
+
+/*PART 1
+1. Create a function 'createImage' which receives 'imgPath' as an input.
+This function returns a promise which creates a new image (use
+document.createElement('img')) and sets the .src attribute to the
+provided image path
+2. When the image is done loading, append it to the DOM element with the
+'images' class, and resolve the promise. The fulfilled value should be the
+image element itself. In case there is an error loading the image (listen for
+the'error' event), reject the promise
+3. If this part is too tricky for you, just watch the first part of the solution*/
+
+/*
+ //PART 2
+4. Consume the promise using .then and also add an error handler
+5. After the image has loaded, pause execution for 2 seconds using the 'wait'
+function we created earlier
+6. After the 2 seconds have passed, hide the current image (set display CSS
+property to 'none'), and load a second image (Hint: Use the image element
+returned by the 'createImage' promise to hide the current image. You will
+need a global variable for that 😉)
+7. After the second image has loaded, pause execution for 2 seconds again
+8. After the 2 seconds have passed, hide the current image
+Test data: Images in the img folder. Test the error handler by passing a wrong
+image path. Set the network speed to “Fast 3G” in the dev tools Network tab,
+otherwise images load too fast
+*/
+const imgContainer = document.querySelector('.images');
+
+const createImage = function (imgPath) {
+  return new Promise(function (resolve, reject) {
+    const img = document.createElement('img');
+    img.src = imgPath;
+
+    img.addEventListener('load', function () {
+      imgContainer.append(img);
+      resolve(img);
+    });
+    img.addEventListener('error', function () {
+      reject(new Error('image not found'));
+    });
+  });
+};
+let currentImage;
+createImage('img/img-1.jpg')
+  .then(img => {
+    currentImage = img;
+    console.log('image 1 loaded');
+    return waits(4);
+  })
+  .then(() => {
+    currentImage.style.display = 'none';
+    return createImage('img/img-2.jpg');
+  })
+  .then(img => {
+    currentImage = img;
+    console.log('image 2 loaded');
+    return waits(4);
+  })
+  .then(() => {
+    currentImage.style.display = 'none';
+  })
+  .catch(err => console.error(err));
