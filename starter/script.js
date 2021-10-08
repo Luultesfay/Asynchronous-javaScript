@@ -198,7 +198,7 @@ getCountryData('usa');
 //         </div>
 //       </article>`;
 //   countriesContainer.insertAdjacentHTML('beforeend', html);
-//   //countriesContainer.style.opacity = 1;
+//   countriesContainer.style.opacity = 1;
 // };
 
 // const renderError = function (msg) {
@@ -826,3 +826,117 @@ const getPositonss = new Promise(function (resolve, reject) {
   navigator.geolocation.getCurrentPosition(resolve, reject);
 });
 getPositonss.then(pos => console.log(pos)); //we get the current location from the browser
+
+//async and await  another way or easer way  to consume promises
+//ES2017  async / await introduses
+
+///////async
+/*
+- It simply allows us to write promises based code as if it was synchronous and it checks that we are not breaking the execution thread.
+- It operates asynchronously via the event-loop. in the background  not in the main thread of of excection
+
+-First of all we have the async keyword, which you put in front of a function declaration to turn it into an async function.
+
+-Async functions will always return a value. It makes sure that a promise is returned and if it is not returned then 
+javascript automatically wraps it in a promise which is resolved with its value.
+*/
+
+//Eg :Try typing the following lines into your browser's JS console:
+
+//this is function decleration not fancy
+function hellos() {
+  return 'Hello there'; //this return value becouse its normal function
+}
+const zz = hellos();
+console.log(zz); // Hello there
+
+//lets add async to the above function   to make it asyncrous
+
+async function hello() {
+  return 'Hello there'; //this return as promise then we consume it using then
+}
+//Invoking the function now returns a promise. This is one of the traits of async functions — their return values are guaranteed to be converted to promises
+hello().then(value => {
+  console.log(value);
+}); //Hello there
+//note :So the async keyword is added to functions to tell them to return a promise rather than directly returning the value.
+
+//we can also rewrite the above async function as expression function  we will change the name to avoid redclerastion error
+
+const helo = async function () {
+  //const helo: () => Promise<string>
+  return 'heloo there'; //returns promise
+};
+helo().then(value => {
+  console.log(value); //hello there
+});
+
+//or we can write with arrow function
+const helos = async () => 'heloo there';
+helos().then(value => {
+  console.log(value);
+}); //'heloo there';
+
+//////////The await keyword
+
+//Await function is used to wait for the promise. It could be used within the async block only.
+//It makes the code wait until the promise returns a result. It only makes the async block wait.
+
+//lets make the above example add 'await'  key word
+
+async function hellow() {
+  const greeting = await Promise.resolve('heloo there'); //the await keyword will   pause your code on that line until the promise fulfills,
+  console.log(greeting); //heloo there
+}
+hellow();
+// lets prove it by adding the below line of  codes
+
+console.log('hiiiiiii'); ///hiiii  this will excute before the promise  becouse await make the async function wait until it get the promise
+//so out put is   hiiiiii    then heloo there
+
+//another real example
+//lets see use the country  api
+
+const btn = document.querySelector('.btn-country');
+const countriesContainer = document.querySelector('.countries');
+
+const renderCountry = function (data, className = '') {
+  const html = `<article class="country ${className}">
+        <img class="country__img" src="${data.flag}" />
+        <div class="country__data">
+          <h3 class="country__name">${data.name}</h3>
+          <h4 class="country__region">${data.region}</h4>
+          <p class="country__row"><span>🌆</span>${data.capital}
+        </p>
+        <p class="country__row"><span>👫</span>${(
+          +data.population / 1000000
+        ).toFixed(1)} million people</p>
+          <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+          <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+        </div>
+      </article>`;
+  countriesContainer.insertAdjacentHTML('beforeend', html);
+  countriesContainer.style.opacity = 1;
+};
+
+const whereIAms = async function (country) {
+  //fetch(`https://restcountries.com/v2/name/${country}`).then(res=>{console.log(res)})//  the same like the below code
+
+  const dataCountry = await fetch(
+    `https://restcountries.com/v2/name/${country}` //we wait for fulfiled promise   then we can consume it
+  );
+  console.log(dataCountry); //we get the response promise and store it in the dataCountry
+  const data = await dataCountry.json(); //since json is also return a promise  then we store the returned json in data
+  console.log(data);
+  renderCountry(data[0]);
+};
+whereIAms('sudan');
+console.log('my country'); //my country
+
+//so the above example  shows us how async and await works
+// first we make the function asyncrous and then we pause the  async function  using 'await' keyword util we get the promise fulfiled
+// but in non  blocking way  since it runs asynchrounosly  in the background  the main tread is not blocked , one of the example we see is   console.log('my country') is run in the main  tread since it was not blocked by the await keyword
+
+//and then   we  store  the response in   'dataCountry' variable and  since   json is return promise we also make the code wait till we get the promise and store it in the date  and then consume the data
+
+//note:  so  with  the  async/await we  don't use  'then' any more to consume it, it make it very easy to consume using async/await
