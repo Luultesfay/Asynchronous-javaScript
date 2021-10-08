@@ -977,7 +977,9 @@ const shallom = async function () {
   //const shalom  () => Promise<string>
   return 'heloo there lulu'; //returns promise
 };
-const greets = await shallom();
-console.log(greets); // heloo there lulu
+shallom().then(value => {
+  console.log(value);
+});
+// heloo there lulu
 
 console.log('hi lulu'); //hi lulu
