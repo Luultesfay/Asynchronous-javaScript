@@ -101,6 +101,7 @@ let getPositions = new Promise(function (resolve, reject) {
 });
 //getPositons.then(pos => console.log(pos)); //we get the current location from the browser
 
+/*
 const whereIAm = function () {
   getPositions
     .then(pos => {
@@ -147,12 +148,28 @@ const whereIAm = function () {
 };
 btns.addEventListener('click', whereIAm);
 
-//we copying it from the script.js to use it for the code below
-const waits = function (sec) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, sec * 1000);
-  });
+*/
+
+///we will rewrite  this above code using async and await keywords in easer way and very short
+
+const whereIAm = async function () {
+  //Geolocation
+  const pos = await getPositions; //returns  promise
+  const { latitude: lat, longitude: lng } = pos.coords;
+
+  //reverese Geolocation
+  const reverseGeo = await fetch(
+    `https://geocode.xyz/${lat},${lng}?geoit=json`
+  ); //return promise
+  const reverseData = await reverseGeo.json();
+  ///country data
+  const res = await fetch(
+    `https://restcountries.com/v2/name/${reverseData.country}`
+  ); //this will return promise
+  const data = await res.json(); //this return also a promise
+  renderCountries(data[0]);
 };
+btns.addEventListener('click', whereIAm);
 
 ////////challenge 2
 
@@ -182,6 +199,14 @@ Test data: Images in the img folder. Test the error handler by passing a wrong
 image path. Set the network speed to “Fast 3G” in the dev tools Network tab,
 otherwise images load too fast
 */
+
+//we copying it from the script.js to use it for the code below
+const waits = function (sec) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, sec * 1000);
+  });
+};
+
 const imgContainer = document.querySelector('.images');
 
 const createImage = function (imgPath) {
