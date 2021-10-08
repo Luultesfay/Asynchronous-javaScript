@@ -49,7 +49,11 @@ const renderCountries = function (data, className = '') {
   countriesContainers.insertAdjacentHTML('beforeend', html);
   //countriesContainers.style.opacity = 1;
 };
-
+const renderErrors = function (msg) {
+  //this will display the error for the user on the screen   and we wiil get the message as argument when the error accured
+  countriesContainers.insertAdjacentText('beforeend', msg);
+  //countriesContainer.style.opacity = 1;
+};
 // const whereIAm = function (lat, lng) {
 //   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
 //     .then(response => response.json())
@@ -150,24 +154,58 @@ btns.addEventListener('click', whereIAm);
 
 */
 
-///we will rewrite  this above code using async and await keywords in easer way and very short
+///we will rewrite  this above code using async and await keywords in easer way and very short way   and we also add try / catch to hundle errors
+
+// const whereIAm = async function () {
+
+//   //Geolocation
+//   const pos = await getPositions; //returns  promise
+//   const { latitude: lat, longitude: lng } = pos.coords;
+
+//   //reverese Geolocation
+//   const reverseGeo = await fetch(
+//     `https://geocode.xyz/${lat},${lng}?geoit=json`
+//   ); //return promise
+//   const reverseData = await reverseGeo.json();
+//   ///country data
+//   const res = await fetch(
+//     `https://restcountries.com/v2/name/${reverseData.country}`
+//   ); //this will return promise
+//   const data = await res.json(); //this return also a promise
+//   renderCountries(data[0]);
+// };
+// btns.addEventListener('click', whereIAm);
+
+////////////add try / catch blocks to hundle errors  to the above code  we will commment out the above code to show the differnce
+
+//we hundled error accured manually by adding wropping the code in try and catch block
+//to see the resolved error click the buttom fast then it will render the hundled error at the screen
 
 const whereIAm = async function () {
-  //Geolocation
-  const pos = await getPositions; //returns  promise
-  const { latitude: lat, longitude: lng } = pos.coords;
+  try {
+    //Geolocation
+    const pos = await getPositions; //returns  promise
+    const { latitude: lat, longitude: lng } = pos.coords;
 
-  //reverese Geolocation
-  const reverseGeo = await fetch(
-    `https://geocode.xyz/${lat},${lng}?geoit=json`
-  ); //return promise
-  const reverseData = await reverseGeo.json();
-  ///country data
-  const res = await fetch(
-    `https://restcountries.com/v2/name/${reverseData.country}`
-  ); //this will return promise
-  const data = await res.json(); //this return also a promise
-  renderCountries(data[0]);
+    //reverese Geolocation
+    const reverseGeo = await fetch(
+      `https://geocode.xyz/${lat},${lng}?geoit=json`
+    ); //return promise
+
+    if (!reverseGeo.ok)
+      throw new Error('problem happening  getting the country💥');
+    const reverseData = await reverseGeo.json();
+    ///country data
+    const res = await fetch(
+      `https://restcountries.com/v2/name/${reverseData.country}`
+    ); //this will return promise
+    if (!res.ok) throw new Error('problem happening 💥');
+    const data = await res.json(); //this return also a promise
+    renderCountries(data[0]);
+  } catch (err) {
+    console.error(`💥 ${err.message}`);
+    renderErrors(`💥 ${err.message}`);
+  }
 };
 btns.addEventListener('click', whereIAm);
 
