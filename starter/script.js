@@ -940,3 +940,18 @@ console.log('my country'); //my country
 //and then   we  store  the response in   'dataCountry' variable and  since   json is return promise we also make the code wait till we get the promise and store it in the date  and then consume the data
 
 //note:  so  with  the  async/await we  don't use  'then' any more to consume it, it make it very easy to consume using async/await
+
+//////////// hundling  error  in async /await  using try and catch
+
+//but first lets catch  errors  in regular javascrispt codes
+
+// try {
+//   let x = 2;
+//   const y = 1;
+//   y = 2; //this will be error becusse we re assigned  const y
+// } catch (err) {
+//   //this hundles the error
+//   alert(err.message); //invalid assignment to const 'y'   is pop up  in the screen
+// }
+
+// the example  for try / catch with async  is in dd.js refer to it
