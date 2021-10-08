@@ -955,3 +955,29 @@ console.log('my country'); //my country
 // }
 
 // the example  for try / catch with async  is in dd.js refer to it
+
+//261 Returning Values from Async Functions
+
+//return value from async function is  always return a promise
+
+const shalom = async function () {
+  //const shalom  () => Promise<string>
+  return 'heloo there lulu'; //returns promise
+};
+const greet = shalom();
+console.log(greet); //Promise { <state>: "fulfilled", <value>: "heloo there lulu" }
+
+console.log('hi lulu'); //hi lulu
+
+//note:async function return promise
+
+//we can write the above code using  await/async
+
+const shallom = async function () {
+  //const shalom  () => Promise<string>
+  return 'heloo there lulu'; //returns promise
+};
+const greets = await shallom();
+console.log(greets); // heloo there lulu
+
+console.log('hi lulu'); //hi lulu
