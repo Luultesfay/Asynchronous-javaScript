@@ -983,3 +983,178 @@ shallom().then(value => {
 // heloo there lulu
 
 console.log('hi lulu'); //hi lulu
+
+///////Running Promises in Parallel  262
+
+//lets  make maltiple  ajax call in consective (one after another in order ) , to see the difference with parallel ajax call
+
+//we will create a function that recieve argument of coutries and  we will use method "getJSON" FROM provious leacture
+
+const getJSON = function (url, errorMesge = 'something wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMesge}(${response.status})`);
+
+    return response.json();
+  });
+};
+
+const get3Countries = async function (c1, c2, c3) {
+  try {
+    const [data1] = await getJSON(`https://restcountries.com/v2/name/${c1}`); //we pass this to the  getJSON method   and distructure it in variable data 1
+    const [data2] = await getJSON(`https://restcountries.com/v2/name/${c2}`);
+    const [data3] = await getJSON(`https://restcountries.com/v2/name/${c3}`);
+    console.log([data1.capital, data2.capital, data3.capital]); //Array(3) [ "Asmara", "Kampala", "Nairobi" ]  we get them in sequence  one wait for the another
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+get3Countries('eritrea', 'uganda', 'kenya');
+
+//note : we get longer loading time  when we   get promise in squence
+
+//////////running in parallel
+///so to make the above load all at the same time  we need to run them in parallel and the loading time will be shortened
+
+//i will change the variable name  and all that conflict with the redicleration
+
+const getJSONs = function (url, errorMesge = 'something wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMesge}(${response.status})`);
+
+    return response.json();
+  });
+};
+
+//we will use promise.all() method     that can run any promise in parallel
+//promise.all combinator. So it's called a combinator function because it allows us to combine multiple promises.
+/*
+The Promise.all() method takes an iterable of promises as an input,
+ and returns a single Promise that resolves to an array of the results of the input promises. 
+ This returned promise will resolve when all of the input's promises have resolved,
+  or if the input iterable contains no promises. 
+  It rejects immediately upon any of the input promises rejecting or non-promises throwing an error, 
+  and will reject with this first rejection message / error.
+   */
+
+const get3Countriess = async function (c11, c22, c33) {
+  try {
+    //Promise.all() returns a new promise thats way we use await // promise.all recives array of resolved results And so promise.all receives an array and it also returns an array.
+    const data = await Promise.all([
+      getJSONs(`https://restcountries.com/v2/name/${c11}`),
+      getJSONs(`https://restcountries.com/v2/name/${c22}`),
+      getJSONs(`https://restcountries.com/v2/name/${c33}`),
+    ]);
+
+    console.log(data.map(d => d[0].capital)); //we will need map to get the capital from the array
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+get3Countriess('eritrea', 'uganda', 'kenya');
+
+//note: if one promise is rejectd in the   promise.all rejects all the other promises   so that means promise.all method  returns short sercuting   //So we say that promise.all short circuits
+
+//when one promise rejects. So again, because one rejected promise is enough for the entire thing to reject as well.
+
+//whenever you have a situation in which you need to do multiple asynchronous operations at the same time, and operations that don't depend on one another,
+
+//then you should always, always run them in parallel,just like we did here.
+
+////////////Promise.race
+
+// Promise.race, just like all other combinators,receives an array of promises and it also returns a promise.
+
+//The Promise.race() method returns a promise that fulfills or rejects as soon as one of the promises in an iterable fulfills or rejects, with the value or reason from that promise.
+
+//eg  lets race between three country
+//we will use an iFEE function  that means  self invoked function
+
+(async function () {
+  const res = await Promise.race([
+    getJSONs(`https://restcountries.com/v2/name/italy`),
+    getJSONs(`https://restcountries.com/v2/name/Egypt`),
+    getJSONs(`https://restcountries.com/v2/name/france`),
+  ]);
+  console.log(res[0]);
+})();
+
+//note:the promise fulfiled first is win the race  with the above code the winner print out
+
+//ex2
+
+const promise1 = new Promise((resolve, reject) => {
+  setTimeout(resolve, 200, 'one');
+});
+
+const promise2 = new Promise((resolve, reject) => {
+  setTimeout(resolve, 100, 'two');
+});
+
+Promise.race([promise1, promise2]).then(value => {
+  console.log(value);
+  // Both resolve, but promise2 is faster
+});
+// expected output: "two"
+
+/////////The Promise.allSettled() method
+// returns a promise that resolves after all of the given promises have either fulfilled or rejected, with an array of objects that each describes the outcome of each promise.
+
+//takes in an array of promises again,and it will simply return an array of all the settled promises. And so again, no matter if the promises got rejected or not.
+
+//the difference is that Promise.all will short circuit as soon as one promise rejects,but Promise.allSettled, simply never short circuits.
+
+//eg
+
+Promise.allSettled([
+  Promise.resolve('Error'),
+  Promise.reject('succsess'),
+  Promise.resolve('succsess'),
+]).then(res => console.log(res));
+/*
+Array(3) [ {…}, {…}, {…} ]
+​
+0: Object { status: "fulfilled", value: "Error" }
+​
+1: Object { status: "rejected", reason: "succsess" }
+​
+2: Object { status: "fulfilled", value: "succsess" }
+​
+length: 3*/
+
+//note: it return all the  fullfilled and reject promises    even the rejected
+
+//if we see promise.all we get error becouse we have one reject   it short circits  but Promise.allSettled is not short cercuits
+
+Promise.all([
+  Promise.resolve('suceess1'),
+  Promise.reject('Error'),
+  Promise.resolve('succsess2'),
+])
+  .then(res => console.log(res))
+  .catch(err => console.error(err)); // output Error
+
+///Promise.any()
+
+//The Promise.any() method accepts a list of Promise objects as an iterable object.
+//As soon as a Promise from the list fulfills,
+//the Promise.any() returns the fulfilled Promise that resolves with a value.
+
+/*
+Promise.any takes in an array of multiple promises and this one will then return
+
+the first fulfilled promise and it will simply ignore rejected promises.
+
+So basically Promise.any is very similar to Promise.race with the difference
+
+that rejected promises are ignored.And so therefore the results of Promise.any is always gonna be a fulfilled promise,
+*/
+
+Promise.any([
+  Promise.resolve('suceess1'),
+  Promise.reject('Error'),
+  Promise.resolve('succsess2'),
+])
+  .then(res => console.log(res))
+  .catch(err => console.error(err)); // output suceess1    reurn first fullfiled promise
