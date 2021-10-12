@@ -1,9 +1,9 @@
 'use strict';
 
 ///////////////////////////////////////
-//asyncrnoius and syncreiuos in js
+//asyhncrnoius and synchrnous js
 
-//syncrous js
+//synchrous js
 // synchronous simply means that the code is executed line by line, in the exact order of execution that we defined in our code,
 
 /*So each line of code always waits for the previous line to finish execution. Now this can create problems when one line of code takes a long time to run.*/
@@ -24,7 +24,7 @@ console.log('please wait for your pizza to be ready');
 //in this above example  first   'is my pizza ready'   will be printed
 //then  set time out will be jumped becouse it will take time to get the result and  'please wait for your pizza to be ready' will be printed
 
-//then finally  the call back finction is excuted 'your pizza is ready'  will be printed     this shows then program flow is not blocked in asyncrynous  but in  synchronous it blocked
+//then finally  the call back function is excuted 'your pizza is ready'  will be printed     this shows then program flow is not blocked in asyhncrnous  but in  synchronous it blocked
 
 ///note
 
@@ -97,10 +97,9 @@ but converted to a string. And so therefore,it's very easy to send across the we
 
 And that's called the XML HTTP request function.*/
 
-// const btn = document.querySelector('.btn-country');
+const btn = document.querySelector('.btn-country');
 // const countriesContainer = document.querySelector('.countries');
 /*Use XMLHttpRequest (XHR) objects to interact with servers. You can retrieve data from a URL without having to do a full page refresh. This enables a Web page to update just pa*/
-
 /*
 const request = new XMLHttpRequest();
 
@@ -111,9 +110,9 @@ request.send(); //then we will send request to api becouse the data still not ar
 //his AJAX call that we just send off here, is being done in the background, while the rest of the code keeps running.And so this is the asynchronous,non-blocking behavior that we talked about in the last lecture.
 
 request.addEventListener('load', function () {
-  //console.log(this.responseText);
+  console.log(this.responseText);
 
-  const [data] = JSON.parse(this.responseText);
+  const [data] = JSON.parse(this.responseText); //change from string to object
   console.log(data);
 
   const html = `<article class="country">
@@ -134,7 +133,6 @@ request.addEventListener('load', function () {
   countriesContainer.style.opacity = 1;
 });
 */
-
 //we will use multiple countries  so we will create  a function that accepts name of country and display  so we will comment out the above code
 /*
 const getCountryData = function (country) {
@@ -143,7 +141,7 @@ const getCountryData = function (country) {
   //open(method: string, url: string | URL)
 
   request.send(); //then we will send request to api becouse the data still not arrived  and this indicate the ASynchronous js
-  //his AJAX call that we just send off here, is being done in the background, while the rest of the code keeps running.And so this is the asynchronous,non-blocking behavior that we talked about in the last lecture.
+  //this AJAX call that we just send off here, is being done in the background, while the rest of the code keeps running.And so this is the asynchronous,non-blocking behavior that we talked about in the last lecture.
 
   request.addEventListener('load', function () {
     //console.log(this.responseText);
@@ -201,11 +199,11 @@ getCountryData('usa');
 //   countriesContainer.style.opacity = 1;
 // };
 
-// const renderError = function (msg) {
-//   //this will display the error for the user on the screen   and we wiil get the message as argument when the error accured
-//   countriesContainer.insertAdjacentText('beforeend', msg);
-//   //countriesContainer.style.opacity = 1;  // we coomented out becouse we use "finally" method and finaly will full fill the opacity
-// };
+const renderError = function (msg) {
+  //this will display the error for the user on the screen   and we wiil get the message as argument when the error accured
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  //countriesContainer.style.opacity = 1;  // we commented out becouse we use "finally" method and finaly will full fill the opacity
+};
 /*
 
 
@@ -270,6 +268,8 @@ getCountryDataAndNeighbour('kenya');
 //what is promise
 //promises are an ES6 feature. So they became available in JavaScript in 2015.
 
+//-A promise is an object that may produce a single value some time in the future.either resolved(fullfiled )or rejected
+
 //- promise is an object that is used as a place holder for the future result of an asynchronous operation
 
 //or   a container for an asynchronousely deliverd value
@@ -279,7 +279,7 @@ getCountryDataAndNeighbour('kenya');
 //perfect example of the future value is  response from ajax call
 
 //Now, what's the big advantage of using promises
-// 1.first by using promises we no longer need to rely on event and callback functions to handle asynchronous results, events and callback functions can sometimes cause unpredictable results.
+// 1.first by using promises we no longer need to relay on event and callback functions to handle asynchronous results, events and callback functions can sometimes cause unpredictable results.
 
 //2but even better with promises, we can chain promises for a sequence of asynchronous operations instead of nesting like we did in the last video. And with this,we can finally escape callback hell,
 
@@ -321,11 +321,11 @@ Now, most of the time we will actually just consume promises,which is also the e
 //       return response.json(); // in order to read data  we call 'json' on the response  also json is a asyncrouse itself means it is runing in the back ground for its response to work so we need to call a methode'then' to hundle  json also
 //     })
 //     .then(function (data) {
-//       //console.log(data); //this will give us the diserd data of the response
+//       console.log(data); //this will give us the diserd data of the response
 //       renderCountry(data[0]);
 //     });
-//};
-//getCountryData('portugal');
+// };
+// getCountryData('portugal');
 
 //we want to use arrow function for the above code
 
@@ -336,50 +336,96 @@ Now, most of the time we will actually just consume promises,which is also the e
 // };
 // getCountryData('portugal');
 
+//////using sync/await
+// const getCountryData = async function (country) {
+//   const res = await fetch(`https://restcountries.com/v2/name/${country}`); // the fetch returns the promise
+//   const data = await res.json();
+//   renderCountry(data[0]);
+//   console.log(data);
+
+// };
+// getCountryData('portugal');
+
 ///////////////promise chaining
 
-/*
 //we will add the nighbour country
 
 //we used here chaining promises
-const getCountryData = function (country) {
+// const getCountryData = function (country) {
+//   //country 1
+//   fetch(`https://restcountries.com/v2/name/${country}`) // the fetch returns  promise
+//     .then(response => response.json())
+//     .then(data => {
+//       renderCountry(data[0]);
+//       console.log(data[0]);
+//       const neighbour = data[0].borders[0]; //this means country1.borders[0]
+//       console.log(neighbour);
+
+//       if (!neighbour) return;
+//       //country2
+//       return fetch(`https://restcountries.com/v2/alpha/${neighbour}`); //the fetch returns  promise
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//       renderCountry(data, 'neighbour'); //hundles promise
+//       //console.log(data);
+//       const neighbour1 = data.borders[0];
+//       //console.log(neighbour1);
+//       if (!neighbour1) return;
+
+//       //neighbour of neighbour
+//       return fetch(`https://restcountries.com/v2/alpha/${neighbour1}`); //the fetch returns  promise
+//     })
+//     .then(response => response.json()) //hundles promise
+//     .then(data => {
+//       renderCountry(data, 'neighbour'); //we pass both the jason data and the class neighbour
+//       console.log(data);
+//       const neighbour2 = data.borders[0];
+//       console.log(neighbour2);
+//       if (!neighbour2) return;
+
+//       //neighbour of neighbour of neighbour
+//       return fetch(`https://restcountries.com/v2/alpha/${neighbour2}`);
+//     })
+//     .then(response => response.json())
+//     .then(data => renderCountry(data, 'neighbour')); //hundles promise
+// };
+
+// btn.addEventListener('click', function () {
+//   getCountryData('kenya');
+// });
+
+//async/await  easet way
+
+const getCountryData = async function (country) {
   //country 1
-  fetch(`https://restcountries.com/v2/name/${country}`) // the fetch returns  promise
-    .then(response => response.json())
-    .then(data => {
-      renderCountry(data[0]);
-      console.log(data[0]);
-      const neighbour = data[0].borders[0]; //this means country1.borders[0]
-      console.log(neighbour);
+  const res1 = await fetch(`https://restcountries.com/v2/name/${country}`); // the fetch returns  promise
+  const data1 = await res1.json();
+  renderCountry(data1[0]);
+  const neighbour = data1[0].borders[0]; //this means country1.borders[0]
 
-      if (!neighbour) return;
-      //country2
-      return fetch(`https://restcountries.com/v2/alpha/${neighbour}`); //the fetch returns  promise
-    })
-    .then(response => response.json())
-    .then(data => {
-      renderCountry(data, 'neighbour'); //hundles promise
-      //console.log(data);
-      const neighbour1 = data.borders[0];
-      //console.log(neighbour1);
-      if (!neighbour1) return;
+  if (!neighbour) return;
+  //country2
+  const res2 = await fetch(`https://restcountries.com/v2/alpha/${neighbour}`); //the fetch returns  promise
+  const data2 = await res2.json();
+  renderCountry(data2, 'neighbour'); //hundles promise
+  const neighbour1 = data2.borders[0];
 
-      //neighbour of neighbour
-      return fetch(`https://restcountries.com/v2/alpha/${neighbour1}`); //the fetch returns  promise
-    })
-    .then(response => response.json()) //hundles promise
-    .then(data => {
-      renderCountry(data, 'neighbour'); //we pass both the jason data and the class neighbour
-      console.log(data);
-      const neighbour2 = data.borders[0];
-      console.log(neighbour2);
-      if (!neighbour2) return;
+  if (!neighbour1) return;
 
-      //neighbour of neighbour of neighbour
-      return fetch(`https://restcountries.com/v2/alpha/${neighbour2}`);
-    })
-    .then(response => response.json())
-    .then(data => renderCountry(data, 'neighbour')); //hundles promise
+  //neighbour of neighbour
+  const res3 = await fetch(`https://restcountries.com/v2/alpha/${neighbour1}`); //the fetch returns  promise
+  const data3 = await res3.json();
+  renderCountry(data3, 'neighbour');
+  //we pass both the jason data and the class neighbour
+  const neighbour2 = data3.borders[0];
+
+  if (!neighbour2) return;
+
+  //neighbour of neighbour of neighbour
+  const res4 = await fetch(`https://restcountries.com/v2/alpha/${neighbour2}`);
+  const data4 = await res4.json();
+  renderCountry(data4, 'neighbour');
 };
 
 btn.addEventListener('click', function () {
@@ -387,13 +433,10 @@ btn.addEventListener('click', function () {
 });
 
 //note we chain four  asyncrnious promises  and we go out of call back hell
-// and also  seince the nieghbour country depend on the first country
+// and also  since the nieghbour country depend on the first country
 //the sequence of the response is in order it means it waits the first data to getback
 
 //note promise helps as to resolve complex asynchrnous code
-
-
-*/
 
 /*
 ///////////Handling Rejected Promises   (handling the error or catching the error)
@@ -444,7 +487,7 @@ const getCountryData = function (country) {
     .then(data => renderCountry(data, 'neighbour'))
     //.catch(err => alert(err)); //this catch method  handles all error that could accoure in every promise of this chain
 
-    //alternatve way or we make it styled but its the same with the above eror  both cathing the error
+    //alternatve way or we make it styled but its the same with the above error  both catching the error
     .catch(err => {
       console.error(`${err}  💥 💥`); // typeError:Failed to fetch  💥 💥
       //also we can print there is error happened or to let them know to users on the screen  and lets create  function called 'renderError'
@@ -619,7 +662,7 @@ So, these two things happen in the call stack  and in the heap.
 */
 
 /*
-Now, what's important to note here is that JavaScript has only one threat of execution.
+Now, what's important to note here is that JavaScript has only one thread of execution.
 
 And so it can only do one thing at a time.There is absolutely no multitasking happening  in JavaScript itself.
 
@@ -683,7 +726,7 @@ Now, we learned before that DOM events are not really asynchronous behavior, but
 
 Except of course for the global context,then if the stack is indeed empty which means that there's currently no code being executed
 
-then it will take the first callback from the callback queue nd put it on the call stack two will be executed. And this is called an "event loop tick".
+then it will take the first callback from the callback queue and put it on the call stack two will be executed. And this is called an "event loop tick".
 
 event loop has the extremely important task of doing coordination between the call stack and to callbacks in the callback queue.
 
@@ -828,7 +871,7 @@ const getPositonss = new Promise(function (resolve, reject) {
 getPositonss.then(pos => console.log(pos)); //we get the current location from the browser
 
 //async and await  another way or easer way  to consume promises
-//ES2017  async / await introduses
+//ES2017  async / await introduces
 
 ///////async
 /*
@@ -879,7 +922,7 @@ helos().then(value => {
 
 //////////The await keyword
 
-//Await function is used to wait for the promise. It could be used within the async block only.
+//Await keyword is used to wait for the promise. It could be used within the async block only.
 //It makes the code wait until the promise returns a result. It only makes the async block wait.
 
 //lets make the above example add 'await'  key word
@@ -897,7 +940,7 @@ console.log('hiiiiiii'); ///hiiii  this will excute before the promise  becouse 
 //another real example
 //lets see use the country  api
 
-const btn = document.querySelector('.btn-country');
+//const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
 
 const renderCountry = function (data, className = '') {
@@ -971,7 +1014,7 @@ console.log('hi lulu'); //hi lulu
 
 //note:async function return promise
 
-//we can write the above code using  await/async
+//we can write the above code using  async
 
 const shallom = async function () {
   //const shalom  () => Promise<string>
@@ -983,6 +1026,14 @@ shallom().then(value => {
 // heloo there lulu
 
 console.log('hi lulu'); //hi lulu
+
+//using async/await
+const shalloms = async function () {
+  const selam = await Promise.resolve('heloo there lulu'); //returns promise
+  console.log(selam); //'heloo there lulu'
+};
+shalloms();
+console.log('hi lulu');
 
 ///////Running Promises in Parallel  262
 
@@ -1011,7 +1062,7 @@ const get3Countries = async function (c1, c2, c3) {
 
 get3Countries('eritrea', 'uganda', 'kenya');
 
-//note : we get longer loading time  when we   get promise in squence
+//note : we get longer loading time  when we   get multiple promises in sequence
 
 //////////running in parallel
 ///so to make the above load all at the same time  we need to run them in parallel and the loading time will be shortened
@@ -1054,7 +1105,7 @@ const get3Countriess = async function (c11, c22, c33) {
 
 get3Countriess('eritrea', 'uganda', 'kenya');
 
-//note: if one promise is rejectd in the   promise.all rejects all the other promises   so that means promise.all method  returns short sercuting   //So we say that promise.all short circuits
+//note: if one promise is rejectd in the   promise.all() rejects all the other promises   so that means promise.all method  returns short cercuting  //So we say that promise.all short circuits
 
 //when one promise rejects. So again, because one rejected promise is enough for the entire thing to reject as well.
 
@@ -1157,4 +1208,4 @@ Promise.any([
   Promise.resolve('succsess2'),
 ])
   .then(res => console.log(res))
-  .catch(err => console.error(err)); // output suceess1    reurn first fullfiled promise
+  .catch(err => console.error(err)); // output suceess1    return first fullfiled promise
